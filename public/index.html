@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8" />
+    <title>WA Web Bot — Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        body {
+            font-family: system-ui, Arial, sans-serif;
+            margin: 0;
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+
+        header {
+            padding: 16px 20px;
+            background: #111827;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 24px auto;
+            padding: 0 16px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: #111827;
+            border: 1px solid #1f2937;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .qr {
+            display: grid;
+            place-items: center;
+            height: 280px;
+            background: #0b1220;
+            border-radius: 10px;
+        }
+
+        #qrcode canvas {
+            border-radius: 8px;
+        }
+
+        .logs {
+            height: 360px;
+            overflow: auto;
+            background: #0b1220;
+            border-radius: 10px;
+            padding: 12px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+            font-size: 13px;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: 0;
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .muted {
+            color: #94a3b8;
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container row">
+            <h3 style="margin:0;">WhatsApp Web Bot</h3>
+            <span class="muted">• Express + WebSocket + whatsapp-web.js</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="grid">
+            <div class="card">
+                <h4>QR Code</h4>
+                <div id="qrcode" class="qr"><span class="muted">Menunggu QR...</span></div>
+                <div style="margin-top:12px;" class="row">
+                    <button id="logoutBtn" title="Hapus session & cache">Logout</button>
+                    <span class="muted">Klik setelah login untuk reset sesi sepenuhnya.</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h4>Logs</h4>
+                <div id="logs" class="logs"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QRCode generator (client-side) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"
+        integrity="sha512-M6G8Fv9fLrMCj3mQ0YIPQ6b+O2G9f4k4tPPN2H7v3y1Z8wQnOQKX7h5H2S9Q2oU4n+9Z7vN4oOe4bGZ8U6Nd1w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="/client.js"></script>
+</body>
+
+</html>
