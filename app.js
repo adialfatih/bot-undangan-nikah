@@ -15,7 +15,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const awaitingName = new Map(); // key: nomor_wa, value: true
 
-const PORT = 3005;
+const PORT = Number(process.env.PORT) || 3006;
 const SESSION_DIR = path.join(__dirname, "session");       // penyimpanan sesi bot
 const CACHE_DIR = path.join(__dirname, ".wwebjs_cache");   // cache chromium whatsapp-web.js
 
