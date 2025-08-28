@@ -72,6 +72,15 @@ function formatAsiaJakartaDateTime(dt = new Date()) {
     const ss = pad(idTime.getSeconds());
     return `${y}-${m}-${d} ${hh}:${mm}:${ss}`;
 }
+function ucwords(str) {
+    // contoh: "muhammad al-farizi" -> "Muhammad Al-Farizi"
+    // mempertahankan separator spasi, tanda minus, dan apostrof
+    const s = (str || "").toLowerCase();
+    return s.split(/(\s|-|')/g).map(seg => {
+        if (/^\s$|^-$|^'$/.test(seg)) return seg; // separator
+        return seg ? seg.charAt(0).toUpperCase() + seg.slice(1) : seg;
+    }).join("");
+}
 async function decodeQR(buffer, wsBroadcast) {
     const base = await Jimp.read(buffer);
     const W = base.bitmap.width, H = base.bitmap.height;
@@ -418,7 +427,7 @@ export async function handleMessage(client, msg, wsBroadcast) {
             if (user) {
                 await client.sendMessage(
                     msg.from,
-                    `Hi kak *${user.nama || "(tanpa nama)"}*. Nomor anda telah terdaftar.\n\nKetik *jadwa acara* untuk melihat tanggal dan waktu acara.\nKetik *lokasi* untuk melihat lokasi seminar.`
+                    `Hi kak *${user.nama || "(tanpa nama)"}*. Nomor anda telah terdaftar.\n\nKetik *jadwal acara* untuk melihat tanggal dan waktu acara.\nKetik *lokasi* untuk melihat lokasi seminar.`
                 );
             } else {
                 awaitingName.set(fromNumber, true);
@@ -516,8 +525,11 @@ export async function handleMessage(client, msg, wsBroadcast) {
             }
             return;
         }
-        if (text === "detil acara") {
+        if (text === "detil acara" || text === "jadwal acara") {
             await client.sendMessage(msg.from, `Nama Acara : Seminar IT "The Power OF PERSONAL BRANDING"\nJadwal Pelaksanaan : Senin, 20 September 2025\nTempat : Ballroom Hotel Dafam\nJl. Uripsumoharjo No.122 Kota Pekalongan\n`);
+        }
+        if (text === "lokasi") {
+            await client.sendMessage(msg.from, `Tempat Acara \nBallroom Hotel Dafam\nJl. Uripsumoharjo No.122 Kota Pekalongan\n`);
         }
         if (text === "kirim gambar") {
             const media = MessageMedia.fromFilePath(INVITE_IMG);
@@ -536,7 +548,7 @@ export async function handleMessage(client, msg, wsBroadcast) {
 
             // Tampilkan daftar nama (fallback ke nomor_wa jika nama null)
             const lines = rows.map((r, i) => {
-                const nama = r.nama || r.nomor_wa;
+                const nama = ucwords(r.nama) || r.nomor_wa;
                 const ts = (r.waktu_hadir && r.waktu_hadir !== "no") ? ` — ${r.waktu_hadir}` : "";
                 return `${i + 1}. ${nama}${ts}`;
             });
@@ -597,7 +609,7 @@ export async function handleMessage(client, msg, wsBroadcast) {
                 return;
             }
 
-            const lines = rows.map((r, i) => `${i + 1}. ${r.nama || r.nomor_wa}`);
+            const lines = rows.map((r, i) => `${i + 1}. ${ucwords(r.nama) || r.nomor_wa}`);
             await client.sendMessage(
                 msg.from,
                 `*Peserta Sudah Bayar*\nTotal: *${total}*\n\n${lines.join("\n")}`
@@ -615,7 +627,7 @@ export async function handleMessage(client, msg, wsBroadcast) {
                 return;
             }
 
-            const lines = rows.map((r, i) => `${i + 1}. ${r.nama || r.nomor_wa}`);
+            const lines = rows.map((r, i) => `${i + 1}. ${ucwords(r.nama) || r.nomor_wa}`);
             await client.sendMessage(
                 msg.from,
                 `*Peserta Belum Bayar*\nTotal: *${total}*\n\n${lines.join("\n")}`
