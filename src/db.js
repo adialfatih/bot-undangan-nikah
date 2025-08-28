@@ -129,3 +129,69 @@ export async function countPaidParticipants() {
     const [rows] = await pool.query("SELECT COUNT(*) AS total FROM table_peserta WHERE status_bayar = 'yes'");
     return rows[0]?.total || 0;
 }
+
+// Set hadir = yes + waktu_hadir
+export async function setAttendanceYes(nomorWa, waktu_hadir) {
+    const [res] = await pool.query(
+        "UPDATE table_peserta SET status_hadir = 'yes', waktu_hadir = ? WHERE nomor_wa = ? LIMIT 1",
+        [waktu_hadir, nomorWa]
+    );
+    return res.affectedRows;
+}
+
+// Ubah status voucher (ready -> empty)
+export async function setVoucherStatus(nomorWa, status /* 'ready' | 'empty' */) {
+    const [res] = await pool.query(
+        "UPDATE table_peserta SET status_voucher = ? WHERE nomor_wa = ? LIMIT 1",
+        [status, nomorWa]
+    );
+    return res.affectedRows;
+}
+// Daftar peserta hadir (nama, nomor, waktu_hadir)
+export async function listHadirParticipants() {
+    const [rows] = await pool.query(
+        `SELECT p.nomor_wa, p.waktu_hadir, u.nama
+     FROM table_peserta p
+     LEFT JOIN table_user u ON u.nomor_wa = p.nomor_wa
+     WHERE p.status_hadir = 'yes'
+     ORDER BY 
+       CASE WHEN p.waktu_hadir = 'no' OR p.waktu_hadir IS NULL THEN 1 ELSE 0 END,
+       p.waktu_hadir ASC`
+    );
+    return rows;
+}
+
+// Hitung peserta dengan status_bayar = 'no'
+export async function countUnpaidParticipants() {
+    const [rows] = await pool.query(
+        "SELECT COUNT(*) AS total FROM table_peserta WHERE status_bayar = 'no'"
+    );
+    return rows[0]?.total || 0;
+}
+// Daftar peserta dengan status_bayar='yes'
+export async function listPaidParticipants() {
+    const [rows] = await pool.query(
+        `SELECT p.nomor_wa, u.nama
+     FROM table_peserta p
+     LEFT JOIN table_user u ON u.nomor_wa = p.nomor_wa
+     WHERE p.status_bayar = 'yes'
+     ORDER BY 
+       CASE WHEN u.nama IS NULL OR u.nama = '' THEN 1 ELSE 0 END,
+       u.nama ASC, p.nomor_wa ASC`
+    );
+    return rows;
+}
+
+// Daftar peserta dengan status_bayar='no'
+export async function listUnpaidParticipants() {
+    const [rows] = await pool.query(
+        `SELECT p.nomor_wa, u.nama
+     FROM table_peserta p
+     LEFT JOIN table_user u ON u.nomor_wa = p.nomor_wa
+     WHERE p.status_bayar = 'no'
+     ORDER BY 
+       CASE WHEN u.nama IS NULL OR u.nama = '' THEN 1 ELSE 0 END,
+       u.nama ASC, p.nomor_wa ASC`
+    );
+    return rows;
+}
