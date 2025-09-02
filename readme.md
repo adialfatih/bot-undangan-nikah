@@ -21,7 +21,7 @@ fetch("https://openrouter.ai/api/v1/chat/completions", {
     ]
   })
 
-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
+
 
 
 fetch("https://openrouter.ai/api/v1/chat/completions", {
